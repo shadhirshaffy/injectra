@@ -1,0 +1,38 @@
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: injectra-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: injectra
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+      POSTGRES_DB: injectra_db
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - injectra_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U injectra -d injectra_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: injectra-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - injectra_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  injectra_postgres_data:
+  injectra_redis_data:
