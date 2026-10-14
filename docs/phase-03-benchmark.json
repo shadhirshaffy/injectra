@@ -1,0 +1,72 @@
+{
+  "python": "3.13.15 (tags/v3.13.15:4061bc4, Aug  5 2026, 13:05:39) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "processor": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",
+  "results": [
+    {
+      "case": 0,
+      "length": 20000,
+      "samples": 1000,
+      "p95_ms": 17.921,
+      "max_ms": 24.911,
+      "median_ms": 13.17
+    },
+    {
+      "case": 1,
+      "length": 20000,
+      "samples": 1000,
+      "p95_ms": 30.662,
+      "max_ms": 94.832,
+      "median_ms": 21.264
+    },
+    {
+      "case": 2,
+      "length": 20000,
+      "samples": 1000,
+      "p95_ms": 18.688,
+      "max_ms": 45.818,
+      "median_ms": 12.666
+    },
+    {
+      "case": 3,
+      "length": 20000,
+      "samples": 1000,
+      "p95_ms": 29.581,
+      "max_ms": 66.796,
+      "median_ms": 21.354
+    },
+    {
+      "case": 4,
+      "length": 20000,
+      "samples": 1000,
+      "p95_ms": 29.096,
+      "max_ms": 57.09,
+      "median_ms": 21.175
+    },
+    {
+      "case": 5,
+      "length": 20000,
+      "samples": 1000,
+      "p95_ms": 33.15,
+      "max_ms": 77.446,
+      "median_ms": 23.641
+    },
+    {
+      "case": 6,
+      "length": 20000,
+      "samples": 1000,
+      "p95_ms": 39.134,
+      "max_ms": 157.689,
+      "median_ms": 26.03
+    },
+    {
+      "case": 7,
+      "length": 20000,
+      "samples": 1000,
+      "p95_ms": 29.974,
+      "max_ms": 73.585,
+      "median_ms": 21.259
+    }
+  ],
+  "passed": true
+}

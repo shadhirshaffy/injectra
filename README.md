@@ -13,4 +13,10 @@ Phase 1 defines the MVP architecture and implementation contracts. Phase 2 imple
 
 [Phase 2 setup and verification](docs/phase-02-backend.md)
 
-Next: Phase 3 rule-based prompt detection.
+Phase 3 adds a standalone, versioned rule-based detector with synthetic attack and
+benign regression coverage. It returns evidence only; the public scan endpoint
+remains deferred until policy and event persistence are integrated.
+
+[Phase 3 detection and verification](docs/phase-03-detection.md)
+
+Next: Phase 4 deterministic policy evaluation.
