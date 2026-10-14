@@ -4,6 +4,12 @@
 
 This document defines the first implementation architecture for Injectra. It converts the project plan into a practical backend, frontend, database, and CI direction for the MVP.
 
+Detailed Phase 1 design documents:
+
+- [API Design](phase-01-api-design.md)
+- [Data Design](phase-01-data-design.md)
+- [Security Workflows](phase-01-security-workflows.md)
+
 Injectra will start as a modular monolith:
 
 - One FastAPI backend.
@@ -411,3 +417,34 @@ Phase 1 is complete when:
 - Database gaps are identified.
 - CI still passes after the documentation change.
 
+
+## Phase 2 Implementation Handoff
+
+The detailed API, data, and security documents are authoritative for implementation details; the examples above are abbreviated.
+
+Implement in this order:
+
+1. Introduce request IDs, shared error handling, database session dependencies, and management identity/role dependencies.
+2. Implement organization creation with owner membership, tenant-scoped reads, and application creation/listing.
+3. Implement key generation, hash-only persistence, metadata listing, idempotent revocation, and gateway authentication dependencies.
+4. Validate migrations against PostgreSQL and test authorization, persistence, uniqueness, expiry, scopes, and tenant isolation.
+
+Phase 2 does not implement detection, policy tables, security events, provider forwarding, or dashboard screens. Those retain their later phase gates above. Redis is reserved infrastructure; no Phase 1 runtime dependency is introduced.
+
+## Phase 1 Verification
+
+Run the same gates as `.github/workflows/ci.yml` from the repository root:
+
+```powershell
+Push-Location apps/api
+.\.venv\Scripts\python.exe -m pytest
+Pop-Location
+Push-Location apps/web
+npm ci
+npm run lint
+npm run build
+Pop-Location
+docker compose --env-file infrastructure/.env.example -f infrastructure/compose.yaml config --quiet
+```
+
+Phase 1 completion records and verification results are tracked in [phase-01-completion.md](phase-01-completion.md). Passing local gates verifies this documentation change; hosted CI status is reported separately.
