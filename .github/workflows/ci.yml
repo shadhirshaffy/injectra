@@ -12,6 +12,30 @@ jobs:
     name: Backend
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: injectra
+          POSTGRES_PASSWORD: ci-test-password
+          POSTGRES_DB: injectra_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U injectra -d injectra_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      POSTGRES_PASSWORD: ci-test-password
+      DATABASE_HOST: 127.0.0.1
+      DATABASE_PORT: 5432
+      DATABASE_USER: injectra
+      DATABASE_NAME: injectra_test
+      APP_ENVIRONMENT: production
+      DEV_ADMIN_ENABLED: "false"
+
     defaults:
       run:
         working-directory: apps/api

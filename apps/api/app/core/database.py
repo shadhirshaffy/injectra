@@ -35,3 +35,15 @@ def test_postgres_connection() -> bool:
 
 def test_redis_connection() -> bool:
     return bool(redis_client.ping())
+
+
+def get_session():
+    from sqlalchemy.orm import Session
+
+    with Session(engine) as session:
+        try:
+            yield session
+            session.commit()
+        except Exception:
+            session.rollback()
+            raise
