@@ -365,6 +365,10 @@ Response:
 }
 ```
 
+Phase 5 event read APIs are implemented. See [event contracts](phase-05-events.md)
+for complete filtering, privacy, and tenant-authorization behavior, including the
+additional `GET /api/v1/security-events/{event_id}` endpoint.
+
 ## Policies
 
 ### `GET /api/v1/applications/{application_id}/policy`
