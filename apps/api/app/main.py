@@ -46,3 +46,7 @@ app.include_router(policy_router)
 from app.api.security_events import router as event_router  # noqa: E402
 
 app.include_router(event_router)
+
+from app.api.gateway import router as gateway_router  # noqa: E402
+
+app.include_router(gateway_router)

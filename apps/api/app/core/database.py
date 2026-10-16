@@ -43,7 +43,10 @@ def get_session():
     with Session(engine) as session:
         try:
             yield session
-            session.commit()
+            # Gateway scans explicitly commit before returning a decision.
+            # Do not start a second commit after their completed transaction.
+            if session.in_transaction():
+                session.commit()
         except Exception:
             session.rollback()
             raise

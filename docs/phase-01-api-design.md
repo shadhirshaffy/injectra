@@ -270,6 +270,10 @@ Success response:
 
 Runs security inspection without forwarding to an LLM.
 
+Phase 6 is implemented. See [scan API behavior](phase-06-scan.md) for the complete
+request/response contract, additive ruleset/policy-version fields, and explicit
+commit-before-success guarantee.
+
 Required scope:
 
 - `gateway:scan`
