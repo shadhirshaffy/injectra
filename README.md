@@ -29,4 +29,10 @@ APIs with filtering and pagination.
 
 [Phase 5 event contracts, privacy, and deployment](docs/phase-05-events.md)
 
-Next: Phase 6 authenticated public scan integration.
+Phase 6 exposes the authenticated public scan endpoint, integrating detection,
+versioned policy evaluation, and committed privacy-safe events.
+
+[Phase 6 scan API and verification](docs/phase-06-scan.md)
+
+Next: production readiness planning (verified management identity, rate limits,
+retention, and operational controls), followed by provider integration.
