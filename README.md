@@ -4,11 +4,19 @@ Injectra is an AI security gateway for detecting and preventing prompt injection
 
 ## Project status
 
-Phase 1 defines the MVP architecture and implementation contracts. The backend currently exposes health only; the frontend is a scaffold. Product endpoints described in the designs are planned work.
+Phase 1 defines the MVP architecture and implementation contracts. Phase 2 implements organization/application APIs, API key lifecycle, tenant authorization, and a local development management identity adapter. The frontend remains a scaffold. Management access is disabled by default; production user authentication is pending.
 
 - [Architecture and phase handoff](docs/phase-01-architecture.md)
 - [API contracts](docs/phase-01-api-design.md)
 - [Data design](docs/phase-01-data-design.md)
 - [Security workflows](docs/phase-01-security-workflows.md)
 
-Next: Phase 2 management identity, organization/application APIs, and API key lifecycle with tenant isolation tests.
+[Phase 2 setup and verification](docs/phase-02-backend.md)
+
+Phase 3 adds a standalone, versioned rule-based detector with synthetic attack and
+benign regression coverage. It returns evidence only; the public scan endpoint
+remains deferred until policy and event persistence are integrated.
+
+[Phase 3 detection and verification](docs/phase-03-detection.md)
+
+Next: Phase 4 deterministic policy evaluation.
