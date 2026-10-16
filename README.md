@@ -24,4 +24,9 @@ and immutable PostgreSQL policy history with fail-closed behavior.
 
 [Phase 4 policy API, deployment, and verification](docs/phase-04-policy.md)
 
-Next: Phase 5 security event persistence, before public scan integration.
+Phase 5 adds privacy-safe security event persistence and tenant-scoped event read
+APIs with filtering and pagination.
+
+[Phase 5 event contracts, privacy, and deployment](docs/phase-05-events.md)
+
+Next: Phase 6 authenticated public scan integration.

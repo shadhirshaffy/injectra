@@ -11,6 +11,7 @@ from app.core.base import Base
 class Policy(Base):
     __tablename__ = "policies"
     __table_args__ = (
+        UniqueConstraint("id", "application_id", "organization_id", name="uq_policy_owner"),
         ForeignKeyConstraint(["application_id", "organization_id"], ["applications.id", "applications.organization_id"], ondelete="CASCADE"),
         UniqueConstraint("application_id", "organization_id", name="uq_policy_application_org"),
         CheckConstraint("current_version >= 1", name="ck_policy_current_version"),

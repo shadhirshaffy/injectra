@@ -20,6 +20,7 @@ class APIKey(Base):
     __tablename__ = "api_keys"
 
     __table_args__ = (
+        UniqueConstraint("id", "application_id", "organization_id", name="uq_api_key_owner"),
         UniqueConstraint(
             "key_prefix",
             name="uq_api_key_prefix",
