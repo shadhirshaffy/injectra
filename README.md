@@ -19,4 +19,9 @@ remains deferred until policy and event persistence are integrated.
 
 [Phase 3 detection and verification](docs/phase-03-detection.md)
 
-Next: Phase 4 deterministic policy evaluation.
+Phase 4 adds deterministic policy evaluation, tenant-scoped management endpoints,
+and immutable PostgreSQL policy history with fail-closed behavior.
+
+[Phase 4 policy API, deployment, and verification](docs/phase-04-policy.md)
+
+Next: Phase 5 security event persistence, before public scan integration.

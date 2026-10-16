@@ -9,7 +9,7 @@ on:
 
 jobs:
   scanner:
-    name: Standalone scanner
+    name: Standalone detection and policy
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -23,7 +23,7 @@ jobs:
           python-version: "3.13"
       - name: Install test runner
         run: python -m pip install pytest==8.3.4
-      - name: Run dependency-free scanner tests
+      - name: Run dependency-free detection and policy tests
         run: python -m pytest scanner_tests
 
   backend:
