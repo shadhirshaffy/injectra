@@ -38,3 +38,11 @@ def health_check():
 from app.api.management import router  # noqa: E402
 
 app.include_router(router)
+
+from app.api.policies import router as policy_router  # noqa: E402
+
+app.include_router(policy_router)
+
+from app.api.security_events import router as event_router  # noqa: E402
+
+app.include_router(event_router)

@@ -365,6 +365,10 @@ Response:
 }
 ```
 
+Phase 5 event read APIs are implemented. See [event contracts](phase-05-events.md)
+for complete filtering, privacy, and tenant-authorization behavior, including the
+additional `GET /api/v1/security-events/{event_id}` endpoint.
+
 ## Policies
 
 ### `GET /api/v1/applications/{application_id}/policy`
@@ -376,6 +380,11 @@ Returns active policy for an application.
 Updates policy and creates a policy version.
 
 Phase 2 does not need this endpoint. Phase 4 should implement it.
+
+Phase 4 is implemented: see [policy contracts](phase-04-policy.md) for request and
+response schemas, expected-version concurrency, and
+`GET /api/v1/applications/{application_id}/policy/versions`. Policies can add
+category blocks; the baseline risk mapping cannot be weakened.
 
 ## Phase 2 API Acceptance Tests
 
