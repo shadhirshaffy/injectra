@@ -17,7 +17,8 @@ router = APIRouter(prefix="/api/v1/security-events", tags=["security events"])
 
 def visible_events(user):
     organizations = select(Membership.organization_id).join(Organization).where(
-        Membership.user_id == user.id, Organization.status == "active")
+        Membership.user_id == user.id, Organization.status == "active",
+        Membership.role.in_(["owner", "admin", "developer"]))
     return select(SecurityEvent).where(SecurityEvent.organization_id.in_(organizations))
 
 

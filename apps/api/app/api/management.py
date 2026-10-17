@@ -74,7 +74,8 @@ def create_organization(body: NamedCreate, session: DB, user: Admin):
 
 @router.get("/organizations", response_model=OrganizationPage)
 def list_organizations(session: DB, user: Admin, limit: Limit = 50, cursor: Cursor = None):
-    statement = select(Organization).join(Membership).where(Membership.user_id == user.id)
+    statement = select(Organization).join(Membership).where(Membership.user_id == user.id,
+        Organization.status == "active", Membership.role.in_(["owner", "admin", "developer"]))
     return paginate(session, statement, Organization, limit, cursor, f"organizations:{user.id}")
 
 

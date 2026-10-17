@@ -2,6 +2,8 @@ import logging
 from uuid import uuid4
 
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from app.core.config import settings
 
 from app.core.errors import error_response, install_error_handlers
 
@@ -10,6 +12,11 @@ app = FastAPI(
     description="AI Security & Prompt Injection Defense Gateway",
     version="0.1.0",
 )
+
+app.add_middleware(CORSMiddleware, allow_origins=settings.clerk_authorized_parties,
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allow_headers=["Authorization", "Content-Type"], expose_headers=["X-Request-ID"],
+    allow_credentials=False)
 
 
 @app.middleware("http")
@@ -50,3 +57,7 @@ app.include_router(event_router)
 from app.api.gateway import router as gateway_router  # noqa: E402
 
 app.include_router(gateway_router)
+
+from app.api.identity import router as identity_router  # noqa: E402
+
+app.include_router(identity_router)

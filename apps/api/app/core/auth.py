@@ -7,12 +7,14 @@ from datetime import datetime, timezone
 from fastapi import Depends, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import select
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.core.database import get_session
 from app.core.errors import APIError
 from app.models import APIKey, Application, Membership, Organization, User
+from app.core.clerk import require_live_session, verify_session
 
 
 bearer_scheme = HTTPBearer(auto_error=False)
@@ -29,6 +31,21 @@ def get_admin(
     request: Request, session: Session = Depends(get_session),
     credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
 ) -> User:
+    if settings.management_auth_provider == "clerk":
+        parts = request.headers.get("authorization", "").split()
+        if len(parts) != 2 or parts[0].lower() != "bearer":
+            raise APIError(401, "unauthenticated", "Management authentication is required.")
+        identity = verify_session(parts[1], request.headers.get("origin"))
+        if request.method not in {"GET", "HEAD", "OPTIONS"}:
+            require_live_session(identity)
+        request.state.identity = identity
+        session.execute(insert(User).values(identity_issuer=identity.issuer, identity_subject=identity.subject,
+            status="active").on_conflict_do_nothing(index_elements=[User.identity_issuer, User.identity_subject]))
+        user = session.scalar(select(User).where(User.identity_issuer == identity.issuer,
+                                                User.identity_subject == identity.subject))
+        if user is None or user.status != "active":
+            raise APIError(401, "unauthenticated", "An active management user is required.")
+        return user
     # A fixed, operator-configured identity; public headers never select a user.
     if (settings.app_environment != "development" or not settings.dev_admin_enabled
             or not request.client or request.client.host not in {"127.0.0.1", "::1"}
@@ -37,7 +54,8 @@ def get_admin(
         raise APIError(401, "invalid_api_key", "Management authentication is required.")
     if not hmac.compare_digest(bearer(request).encode(), settings.dev_admin_token.get_secret_value().encode()):
         raise APIError(401, "invalid_api_key", "Management authentication is required.")
-    user = session.scalar(select(User).where(User.identity_subject == settings.dev_admin_subject))
+    user = session.scalar(select(User).where(User.identity_subject == settings.dev_admin_subject,
+                                            User.identity_issuer == "local-development"))
     if user is None or user.status != "active":
         raise APIError(401, "invalid_api_key", "An active management user is required.")
     return user
@@ -45,11 +63,13 @@ def get_admin(
 
 def require_membership(session, user, organization_id, manage=False):
     membership = session.scalar(select(Membership).where(
-        Membership.organization_id == organization_id, Membership.user_id == user.id))
-    organization = session.get(Organization, organization_id)
+        Membership.organization_id == organization_id, Membership.user_id == user.id)
+        .execution_options(populate_existing=True))
+    organization = session.get(Organization, organization_id, populate_existing=True)
     if membership is None or organization is None:
         raise APIError(404, "not_found", "Organization not found.")
-    if organization.status != "active" or (manage and membership.role not in {"owner", "admin"}):
+    if (organization.status != "active" or membership.role not in {"owner", "admin", "developer"}
+            or (manage and membership.role not in {"owner", "admin"})):
         raise APIError(403, "forbidden", "Insufficient organization permissions.")
     return organization
 

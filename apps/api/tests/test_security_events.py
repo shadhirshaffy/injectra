@@ -108,7 +108,7 @@ def test_filters_and_pagination(client, db):
 def test_membership_filters_and_foreign_reads(client, db):
     key, event = event_for(client, db)
     membership = db.scalar(select(Membership).where(Membership.organization_id == UUID(key["organization_id"])))
-    membership.role = "member"
+    membership.role = "developer"
     db.flush()
     assert client.get(f"/api/v1/security-events/{event.id}").status_code == 200
     foreign = Organization(name="Foreign")
