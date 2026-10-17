@@ -6,6 +6,7 @@ from app.models.application import Application
 from app.models.api_key import APIKey
 from app.models.policy import Policy, PolicyVersion
 from app.models.security_event import SecurityEvent
+from app.models.invitation import Invitation
 
 __all__ = [
     "Organization",
@@ -16,4 +17,5 @@ __all__ = [
     "Policy",
     "PolicyVersion",
     "SecurityEvent",
+    "Invitation",
 ]

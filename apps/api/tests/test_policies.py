@@ -75,7 +75,7 @@ def test_authorization_and_tenant_isolation(client, db):
     assert client.get(foreign_url + "/versions").status_code == 404
     assert client.put(foreign_url, json=write_body()).status_code == 404
     membership = db.scalar(select(Membership).where(Membership.user_id == client.admin_user.id))
-    membership.role = "member"
+    membership.role = "developer"
     db.flush()
     assert client.get(url).status_code == 200
     assert client.put(url, json=write_body()).status_code == 403

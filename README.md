@@ -4,7 +4,10 @@ Injectra is an AI security gateway for detecting and preventing prompt injection
 
 ## Project status
 
-Phase 1 defines the MVP architecture and implementation contracts. Phase 2 implements organization/application APIs, API key lifecycle, tenant authorization, and a local development management identity adapter. The frontend remains a scaffold. Management access is disabled by default; production user authentication is pending.
+Phases 1–6 implement the backend architecture, tenant management, API keys,
+deterministic detection, versioned policies, security events, and authenticated
+gateway scans. Clerk management authentication and organization onboarding are
+implemented; live sign-in remains disabled until a Clerk application is configured.
 
 - [Architecture and phase handoff](docs/phase-01-architecture.md)
 - [API contracts](docs/phase-01-api-design.md)
@@ -34,5 +37,11 @@ versioned policy evaluation, and committed privacy-safe events.
 
 [Phase 6 scan API and verification](docs/phase-06-scan.md)
 
-Next: production readiness planning (verified management identity, rate limits,
-retention, and operational controls), followed by provider integration.
+Management authentication now supports Clerk sessions with database-owned
+organization access and verified-email invitations. Configure your Clerk instance
+before enabling live sign-in.
+
+[Authentication setup, cutover, and verification](docs/production-authentication.md)
+
+Next: live identity configuration/validation, rate limits, retention, and
+operational controls before production launch or provider forwarding.
