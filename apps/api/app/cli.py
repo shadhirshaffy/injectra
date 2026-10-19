@@ -1,4 +1,4 @@
-"""Explicit local development identity bootstrap; never exposed as an HTTP route."""
+"""Explicit operator commands; never exposed as HTTP routes."""
 import argparse
 import re
 from uuid import UUID
@@ -14,10 +14,33 @@ from app.models import User
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("command", choices=["create-local-admin", "link-clerk-user"])
+    parser.add_argument("command", choices=["create-local-admin", "link-clerk-user", "cleanup-security-events"])
+    scope = parser.add_mutually_exclusive_group()
+    scope.add_argument("--organization-id", type=UUID)
+    scope.add_argument("--all-organizations", action="store_true")
+    parser.add_argument("--retention-days", type=int, default=90)
+    parser.add_argument("--batch-size", type=int, default=1000)
+    parser.add_argument("--max-batches", type=int, default=100)
+    parser.add_argument("--execute", action="store_true")
     parser.add_argument("--user-id", type=UUID)
     parser.add_argument("--subject")
     args = parser.parse_args()
+    if args.command == "cleanup-security-events":
+        from app.events.retention import RetentionPlan, cleanup, preview
+        if not args.organization_id and not args.all_organizations:
+            parser.error("Provide --organization-id or --all-organizations explicitly.")
+        try:
+            plan = RetentionPlan.for_days(args.retention_days, organization_id=args.organization_id,
+                                          batch_size=args.batch_size, max_batches=args.max_batches)
+        except ValueError as exc:
+            parser.error(str(exc))
+        print("Retention cutoff (exclusive):", plan.cutoff.isoformat())
+        if args.execute:
+            print("Committed deletions:", cleanup(engine, plan))
+            print("Bounded run finished; locked or remaining rows may require another run.")
+        else:
+            print("Dry run; eligible events:", preview(engine, plan))
+        return
     if args.command == "link-clerk-user":
         if (settings.management_auth_provider != "clerk" or not args.user_id
                 or not args.subject or not re.fullmatch(r"user_[A-Za-z0-9]{1,200}", args.subject)):

@@ -48,5 +48,9 @@ admission when Redis is unavailable.
 
 [Gateway rate limits and deployment](docs/gateway-rate-limits.md)
 
-Next: live identity configuration/validation, management abuse controls, retention, and
+Security-event retention now provides explicit operator previews and bounded cleanup.
+
+[Retention operations and limitations](docs/security-event-retention.md)
+
+Next: live identity configuration/validation, management abuse controls, and
 operational controls before production launch or provider forwarding.
