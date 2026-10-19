@@ -1,7 +1,7 @@
 import logging
 from uuid import uuid4
 
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 
@@ -44,16 +44,19 @@ def health_check():
 
 # Import after app setup; database credentials are required for management routes.
 from app.api.management import router  # noqa: E402
+from app.core.management_admission import management_source_admission, management_user_admission  # noqa: E402
 
-app.include_router(router)
+management_controls = [Depends(management_source_admission), Depends(management_user_admission)]
+
+app.include_router(router, dependencies=management_controls)
 
 from app.api.policies import router as policy_router  # noqa: E402
 
-app.include_router(policy_router)
+app.include_router(policy_router, dependencies=management_controls)
 
 from app.api.security_events import router as event_router  # noqa: E402
 
-app.include_router(event_router)
+app.include_router(event_router, dependencies=management_controls)
 
 from app.api.gateway import router as gateway_router  # noqa: E402
 
@@ -61,4 +64,4 @@ app.include_router(gateway_router)
 
 from app.api.identity import router as identity_router  # noqa: E402
 
-app.include_router(identity_router)
+app.include_router(identity_router, dependencies=management_controls)

@@ -46,6 +46,8 @@ class Admission:
 
 
 class GatewayRateLimiter:
+    unavailable_message = "Gateway admission unavailable."
+    exceeded_message = "Application scan quota exceeded."
     def __init__(self, client, limit, window_seconds, prefix):
         if (type(limit) is not int or not 1 <= limit <= 1_000_000
                 or type(window_seconds) is not int or not 1 <= window_seconds <= 3600
@@ -62,6 +64,12 @@ class GatewayRateLimiter:
     def check(self, identity):
         try:
             key = self.key(identity.organization.id, identity.application.id)
+        except Exception as exc:
+            raise APIError(503, "service_unavailable", self.unavailable_message) from exc
+        return self.check_key(key)
+
+    def check_key(self, key):
+        try:
             result = self.client.eval(ADMIT_SCRIPT, 1, key, self.limit, self.window_ms)
             if (not isinstance(result, (list, tuple)) or len(result) != 3
                     or any(type(item) is not int for item in result)):
@@ -72,9 +80,9 @@ class GatewayRateLimiter:
                 raise ValueError("Invalid admission response")
             admission = Admission(self.limit, remaining, max(1, ceil(ttl_ms / 1000)))
         except Exception as exc:
-            raise APIError(503, "service_unavailable", "Gateway admission unavailable.") from exc
+            raise APIError(503, "service_unavailable", self.unavailable_message) from exc
         if not allowed:
-            raise APIError(429, "rate_limited", "Application scan quota exceeded.",
+            raise APIError(429, "rate_limited", self.exceeded_message,
                            headers={**admission.headers(), "Retry-After": str(admission.reset_after_seconds)})
         return admission
 

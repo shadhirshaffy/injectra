@@ -15,6 +15,18 @@ from app.core.database import database_url, engine, get_session
 from app.main import app
 from app.models import User
 from app.core.rate_limit import Admission, get_gateway_limiter
+from app.core.management_admission import get_management_limiter
+
+
+@pytest.fixture(autouse=True)
+def isolated_management_admission():
+    # Dedicated admission tests replace this; unrelated auth tests require no Redis.
+    class AllowManagement:
+        def admit(self, scope, identifier):
+            return Admission(300, 299, 60)
+    app.dependency_overrides[get_management_limiter] = lambda: dict.fromkeys(("source", "user", "write"), AllowManagement())
+    yield
+    app.dependency_overrides.pop(get_management_limiter, None)
 
 
 @pytest.fixture(scope="session")

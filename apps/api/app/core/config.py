@@ -50,6 +50,11 @@ class Settings(BaseSettings):
     database_name: str = "injectra_db"
 
     redis_url: str = "redis://127.0.0.1:6379/0"
+    management_source_limit_requests: int = Field(default=300, ge=1, le=1_000_000)
+    management_user_limit_requests: int = Field(default=120, ge=1, le=1_000_000)
+    management_write_limit_requests: int = Field(default=30, ge=1, le=1_000_000)
+    management_rate_limit_window_seconds: int = Field(default=60, ge=1, le=3600)
+    management_rate_limit_prefix: str = Field(default="injectra:management-rate:v1", pattern=r"^[A-Za-z0-9:_-]{1,100}$")
     gateway_rate_limit_requests: int = Field(default=60, ge=1, le=1_000_000)
     gateway_rate_limit_window_seconds: int = Field(default=60, ge=1, le=3600)
     gateway_rate_limit_prefix: str = Field(default="injectra:gateway-rate:v1", pattern=r"^[A-Za-z0-9:_-]{1,100}$")
