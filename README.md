@@ -52,5 +52,9 @@ Security-event retention now provides explicit operator previews and bounded cle
 
 [Retention operations and limitations](docs/security-event-retention.md)
 
-Next: live identity configuration/validation, management abuse controls, and
+Management APIs now enforce shared Redis source, verified-user and write quotas.
+
+[Management abuse controls and deployment](docs/management-abuse-controls.md)
+
+Next: live identity configuration/validation and
 operational controls before production launch or provider forwarding.
