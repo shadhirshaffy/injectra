@@ -6,10 +6,11 @@ from starlette.exceptions import HTTPException
 
 
 class APIError(Exception):
-    def __init__(self, status: int, code: str, message: str):
+    def __init__(self, status: int, code: str, message: str, headers: dict[str, str] | None = None):
         self.status = status
         self.code = code
         self.message = message
+        self.headers = headers or {}
 
 
 def error_response(request, status, code, message, headers=None):
@@ -24,7 +25,7 @@ def error_response(request, status, code, message, headers=None):
 def install_error_handlers(app):
     @app.exception_handler(APIError)
     async def api_error(request: Request, exc: APIError):
-        headers = {"WWW-Authenticate": "Bearer"} if exc.status == 401 else None
+        headers = {**exc.headers, **({"WWW-Authenticate": "Bearer"} if exc.status == 401 else {})}
         return error_response(request, exc.status, exc.code, exc.message, headers)
 
     @app.exception_handler(RequestValidationError)

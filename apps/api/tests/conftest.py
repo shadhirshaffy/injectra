@@ -14,6 +14,7 @@ from app.core.config import settings
 from app.core.database import database_url, engine, get_session
 from app.main import app
 from app.models import User
+from app.core.rate_limit import Admission, get_gateway_limiter
 
 
 @pytest.fixture(scope="session")
@@ -63,6 +64,12 @@ def client(db, monkeypatch):
 
     app.dependency_overrides[get_session] = request_session
     app.dependency_overrides[get_admin] = lambda: user
+    # Non-admission tests remain independent of Redis. Dedicated integration
+    # tests replace this override with the real atomic Redis limiter.
+    class AllowAdmission:
+        def check(self, identity):
+            return Admission(60, 59, 60)
+    app.dependency_overrides[get_gateway_limiter] = lambda: AllowAdmission()
     with TestClient(app) as test_client:
         test_client.admin_user = user
         yield test_client
