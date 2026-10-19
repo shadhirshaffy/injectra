@@ -24,6 +24,7 @@ class SecurityEvent(Base):
         CheckConstraint("(policy_id IS NULL AND policy_version = 0) OR (policy_id IS NOT NULL AND policy_version >= 1)", name="ck_event_policy_reference"),
         CheckConstraint("redacted_input IS NULL", name="ck_event_no_content"),
         Index("ix_events_org_created", "organization_id", "created_at", "id"),
+        Index("ix_events_retention", "created_at", "id"),
         Index("ix_events_app_created", "application_id", "created_at", "id"),
         Index("ix_events_key_owner", "api_key_id", "application_id", "organization_id"),
         Index("ix_events_policy_version", "policy_id", "policy_version"),
