@@ -15,7 +15,8 @@ app = FastAPI(
 
 app.add_middleware(CORSMiddleware, allow_origins=settings.clerk_authorized_parties,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
-    allow_headers=["Authorization", "Content-Type"], expose_headers=["X-Request-ID"],
+    allow_headers=["Authorization", "Content-Type"], expose_headers=["X-Request-ID", "Retry-After",
+        "X-RateLimit-Limit", "X-RateLimit-Remaining", "X-RateLimit-Reset-After"],
     allow_credentials=False)
 
 

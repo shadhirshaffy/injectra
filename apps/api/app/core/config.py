@@ -50,6 +50,9 @@ class Settings(BaseSettings):
     database_name: str = "injectra_db"
 
     redis_url: str = "redis://127.0.0.1:6379/0"
+    gateway_rate_limit_requests: int = Field(default=60, ge=1, le=1_000_000)
+    gateway_rate_limit_window_seconds: int = Field(default=60, ge=1, le=3600)
+    gateway_rate_limit_prefix: str = Field(default="injectra:gateway-rate:v1", pattern=r"^[A-Za-z0-9:_-]{1,100}$")
 
     model_config = SettingsConfigDict(
         env_file=ENV_FILE,

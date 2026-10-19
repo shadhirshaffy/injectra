@@ -3,6 +3,8 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.engine import URL
 
 from redis import Redis
+from redis.backoff import NoBackoff
+from redis.retry import Retry
 
 from app.core.config import settings
 
@@ -24,6 +26,10 @@ engine = create_engine(
 redis_client = Redis.from_url(
     settings.redis_url,
     decode_responses=True,
+    socket_connect_timeout=1.0,
+    socket_timeout=1.0,
+    retry=Retry(NoBackoff(), 0),
+    retry_on_timeout=False,
 )
 
 

@@ -43,5 +43,10 @@ before enabling live sign-in.
 
 [Authentication setup, cutover, and verification](docs/production-authentication.md)
 
-Next: live identity configuration/validation, rate limits, retention, and
+Gateway scans now enforce Redis-backed per-application request quotas and reject
+admission when Redis is unavailable.
+
+[Gateway rate limits and deployment](docs/gateway-rate-limits.md)
+
+Next: live identity configuration/validation, management abuse controls, retention, and
 operational controls before production launch or provider forwarding.

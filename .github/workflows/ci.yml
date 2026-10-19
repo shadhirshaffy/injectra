@@ -30,6 +30,15 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 5
       postgres:
         image: postgres:17-alpine
         env:
@@ -52,6 +61,7 @@ jobs:
       DATABASE_NAME: injectra_test
       APP_ENVIRONMENT: production
       DEV_ADMIN_ENABLED: "false"
+      REDIS_URL: redis://127.0.0.1:6379/0
 
     defaults:
       run:

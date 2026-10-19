@@ -1,12 +1,13 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, Response
 from sqlalchemy.orm import Session
 
 from app.core.auth import GatewayIdentity, require_gateway_scope
 from app.core.database import get_session
 from app.core.errors import APIError
+from app.core.rate_limit import GatewayRateLimiter, get_gateway_limiter
 from app.detection import scan
 from app.events.service import record_scan_event
 from app.policy.service import evaluate_for_application
@@ -17,8 +18,12 @@ ScanIdentity = Annotated[GatewayIdentity, Depends(require_gateway_scope("gateway
 
 
 @router.post("/scan", response_model=ScanResponse)
-def scan_prompt(body: ScanRequest, request: Request, identity: ScanIdentity,
-                session: Annotated[Session, Depends(get_session)]):
+def scan_prompt(body: ScanRequest, request: Request, response: Response, identity: ScanIdentity,
+                session: Annotated[Session, Depends(get_session)],
+                limiter: Annotated[GatewayRateLimiter, Depends(get_gateway_limiter)]):
+    # Outside pipeline error wrapping so a quota denial stays 429, not 503.
+    admission = limiter.check(identity)
+    response.headers.update(admission.headers())
     try:
         evidence = scan(body.input, body.content_type)
         decision = evaluate_for_application(session, identity.organization.id,
